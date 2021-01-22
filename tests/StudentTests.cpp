@@ -30,6 +30,94 @@ TEST_CASE("RLE Compression", "[student]")
 										 expected, sizeof(expected) - 1);
 		REQUIRE(result);
 	}
+    
+    SECTION("Long positive run")
+    {
+        char test[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        char expected[] = "\x50" "a";
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+        
+        REQUIRE(result);
+    }
+    
+    SECTION("Long negative run")
+    {
+        char test[] = "alalalalalalalalalalalalalalalalalalalal"
+        "alalalalalalalalalalalalalalalalalalalal";
+        char expected[] = "\xB0" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l";
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+        
+        REQUIRE(result);
+    }
+    
+    SECTION("Alternating positive and negative runs")
+    {
+        char test[] = "aaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqp"
+        "aaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqp";
+        char expected[] = "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p"
+        "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p"
+        "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p"
+        "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p";
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+        
+        REQUIRE(result);
+    }
+    
+    SECTION("Single char")
+    {
+        char test[] = "a";
+        char expected[] = "\x01" "a";
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+        
+        REQUIRE(result);
+    }
+    
+    SECTION("Very long positive run that is greater than max size")
+    {
+        char test[] = "alalalalalalalalalalalalalalalalalalalal"
+        "alalalalalalalalalalalalalalalalalalalal";
+        char expected[] = "\xB0" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l";
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+        
+        REQUIRE(result);
+    }
+    
+    SECTION("")
+    {
+        char test[] = "alalalalalalalalalalalalalalalalalalalal"
+        "alalalalalalalalalalalalalalalalalalalal";
+        char expected[] = "\xB0" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l";
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+        
+        REQUIRE(result);
+    }
+    
+    SECTION("")
+    {
+        char test[] = "alalalalalalalalalalalalalalalalalalalal"
+        "alalalalalalalalalalalalalalalalalalalal";
+        char expected[] = "\xB0" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l"
+        "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l" "a" "l";
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+        
+        REQUIRE(result);
+    }
+    
 	
 	// TODO: Add more test case sections!!
 }
