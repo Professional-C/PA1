@@ -70,16 +70,23 @@ void RleData::Compress(const char* input, size_t inSize)
             negEnd = i;
         }
         if((i == temp.size()-2) || (temp[i] != 1) || (((negEnd-negStart)+2) /2 == 127)){ //end of neg run or last run
-            int numNeg = ((negEnd-negStart) + 2) / 2;
-            mData[mSize++] = numNeg*-1;
-            for(int j = negStart+1; j < negStart+(negEnd-negStart)+2; j+=2){
-                mData[mSize++] = temp[j];
+            if((negStart - negEnd) == negStart){ // run of 1
+                mData[mSize++] = 1;
+                mData[mSize++] = temp[i-1];
+            }
+            else if(negEnd != 0){
+                int numNeg = ((negEnd-negStart) + 2) / 2;
+                mData[mSize++] = numNeg*-1;
+                for(int j = negStart+1; j < negStart+(negEnd-negStart)+2; j+=2){
+                    mData[mSize++] = temp[j];
+                }
             }
             if(temp[i] != 1){
                 mData[mSize++] = temp[i];
                 mData[mSize++] = temp[i+1];
             }
             negStart = -1;
+            negEnd = 0;
         }
     }
     

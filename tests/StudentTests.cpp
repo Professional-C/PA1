@@ -93,7 +93,7 @@ TEST_CASE("RLE Compression", "[student]")
         REQUIRE(result);
     }
     
-    SECTION("Long alternating positive and negative runs")
+    SECTION("Alternating positive and negative runs")
     {
         char test[] = "aaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqpaaaaapqpqp";
         char expected[] = "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p""\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p" "\x05" "a" "\xFB" "p" "q" "p" "q" "p";
@@ -102,6 +102,20 @@ TEST_CASE("RLE Compression", "[student]")
 
         REQUIRE(result);
     }
+    
+    SECTION("Long alternating positive and negative runs")
+    {
+        char test[] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbabcdeaaaaabbbbbabcde";
+        char expected[] = "\x7F" "a" "\x21" "a" "\x05" "b" "\xFB" "abcde" "\x05" "a" "\x05" "b" "\xFB" "abcde";
+
+        bool result = RunCompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+
+        REQUIRE(result);
+    }
+
 
    
     SECTION("Short positive run")
@@ -170,6 +184,16 @@ TEST_CASE("RLE Decompression", "[student]")
         REQUIRE(result);
     }
     
+    SECTION("Basic mix run") //not sure if correct
+        {
+            char test[] = "aabcccdefg"; //2 a 1 b 3 c -4 d e f g
+            char expected[] = "\x02" "a" "\x01" "b" "\x03" "c" "\xFC" "d" "e" "f" "g";
+            
+            bool result = RunCompressionTest(test, sizeof(test) - 1,
+                                             expected, sizeof(expected) - 1);
+            REQUIRE(result);
+        }
+    
     SECTION("Long negative run")
     {
 
@@ -197,29 +221,29 @@ TEST_CASE("RLE Decompression", "[student]")
 //	}
 //}
 //
-//TEST_CASE("File compression", "[student]")
-//{
-//	RleFile r;
-//	SECTION("rle.bmp")
-//	{
-//		r.CreateArchive("data/rle.bmp");
-//		bool result = CheckFileMD5("data/rle.bmp.rl1", "f2a9d8425d53c664e45d9eb1b53137b9");
-//		REQUIRE(result);
-//	}
-//	SECTION("pic.jpg")
-//	{
-//		r.CreateArchive("data/pic.jpg");
-//		bool result = CheckFileMD5("data/pic.jpg.rl1", "0bbf2a5109b30d79939d2061ea8c74aa");
-//		REQUIRE(result);
-//	}
-//	SECTION("Conquest.ogg")
-//	{
-//		r.CreateArchive("data/Conquest.ogg");
-//		bool result = CheckFileMD5("data/Conquest.ogg.rl1", "ec29ff368ec5100bfba22635ddc5ba5c");
-//		REQUIRE(result);
-//	}
-//}
-//
+TEST_CASE("File compression", "[student]")
+{
+	RleFile r;
+	SECTION("rle.bmp")
+	{
+		r.CreateArchive("data/rle.bmp");
+		bool result = CheckFileMD5("data/rle.bmp.rl1", "f2a9d8425d53c664e45d9eb1b53137b9");
+		REQUIRE(result);
+	}
+	SECTION("pic.jpg")
+	{
+		r.CreateArchive("data/pic.jpg");
+		bool result = CheckFileMD5("data/pic.jpg.rl1", "0bbf2a5109b30d79939d2061ea8c74aa");
+		REQUIRE(result);
+	}
+	SECTION("Conquest.ogg")
+	{
+		r.CreateArchive("data/Conquest.ogg");
+		bool result = CheckFileMD5("data/Conquest.ogg.rl1", "ec29ff368ec5100bfba22635ddc5ba5c");
+		REQUIRE(result);
+	}
+}
+
 //TEST_CASE("File decompression", "[student]")
 //{
 //	RleFile r;
