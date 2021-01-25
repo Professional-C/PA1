@@ -63,7 +63,7 @@ void RleData::Compress(const char* input, size_t inSize)
             continue;
         }
         else if(negStart == -1){ // start of neg run
-            if(i == temp.size()-2){
+            if(i == temp.size()-2){ // last iteration, ending with single char
                 mData[mSize++] = 1;
                 mData[mSize++] = temp[i+1];
             }
@@ -73,12 +73,12 @@ void RleData::Compress(const char* input, size_t inSize)
         else if(temp[i] == 1){ // continuing neg run
             negEnd = i;
         }
-        if((i == temp.size()-2) || (temp[i] != 1) || (((negEnd-negStart)+2) /2 == 127)){ //end of neg run or last run
-            if((negStart - negEnd) == negStart){ // run of 1
+        if((i == temp.size()-2) || (temp[i] != 1) || (((negEnd-negStart)+2) /2 == 127)){ //end of neg run or last iteration
+            if(negEnd == 0){ // run of 1
                 mData[mSize++] = 1;
                 mData[mSize++] = temp[i-1];
             }
-            else if(negEnd != 0){
+            else {
                 int numNeg = ((negEnd-negStart) + 2) / 2;
                 mData[mSize++] = numNeg*-1;
                 for(int j = negStart+1; j < negStart+(negEnd-negStart)+2; j+=2){
