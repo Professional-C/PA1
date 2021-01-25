@@ -25,7 +25,6 @@ void RleFile::CreateArchive(const std::string& source)
             
         // Write to file
         std::string outFile = source + ".rl1";
-        std::cout << "output name: " << outFile << std::endl;
         mHeader.mFileNameLength = outFile.size();
         mHeader.mFileName = outFile;
         mHeader.mFileSize = size;

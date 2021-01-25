@@ -63,6 +63,10 @@ void RleData::Compress(const char* input, size_t inSize)
             continue;
         }
         else if(negStart == -1){ // start of neg run
+            if(i == temp.size()-2){
+                mData[mSize++] = 1;
+                mData[mSize++] = temp[i+1];
+            }
             negStart = i;
             continue;
         }

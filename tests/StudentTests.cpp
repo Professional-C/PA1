@@ -183,6 +183,19 @@ TEST_CASE("RLE Decompression", "[student]")
                                            expected, sizeof(expected) - 1);
         REQUIRE(result);
     }
+   
+    SECTION("Long negative run")
+    {
+
+        char test[] = "\x81" "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvw" "\xFD" "xyz";
+        char expected[] = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+
+        bool result = RunDecompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
+
+        REQUIRE(result);
+    }
+    
+    // TA TESTS
     
     SECTION("Basic mix run") //not sure if correct
         {
@@ -194,16 +207,63 @@ TEST_CASE("RLE Decompression", "[student]")
             REQUIRE(result);
         }
     
-    SECTION("Long negative run")
+
+   SECTION("Overflow negative run followed by short positive") //not sure if correct
+   {
+       char test[204];
+       for(int i = 0; i < 200; i++){
+           test[i] = 'a' + i%3;
+       }
+       test[200] = 'e';
+       test[201] = 'e';
+       test[202] = 'e';
+       
+       char expected[205];
+       for(int i = 1; i <= 127; i++){
+           expected[i] = 'a' + (i - 1)%3;
+       }
+       for(int i = 129; i < 202; i++){
+           expected[i] = 'a' + (i - 2)%3;
+       }
+       expected[0] = '\x81'; //-127 .. -73 ... 3
+       expected[128] = '\xB7';
+       expected[202] = '\x03';
+       expected[203] = 'e';
+
+       bool result = RunCompressionTest(test, sizeof(test) - 1,
+                                        expected, sizeof(expected) - 1);
+       REQUIRE(result);
+   }
+SECTION("Overflow mix run")
     {
-
-        char test[] = "\x81" "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvw" "\xFD" "xyz";
-        char expected[] = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
-
-        bool result = RunDecompressionTest(test, sizeof(test) - 1, expected, sizeof(expected) - 1);
-
+        char test[201];
+        for(int i = 0; i < 198; i++){
+            test[i] = 'a';
+        }
+        test[198] = 'b';
+        test[199] = 'c';
+        char expected[] = "\x7F" "a" "\x47" "a" "\xFE" "b" "c"; //127 a 71 a -2 b c
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1,
+                                         expected, sizeof(expected) - 1);
         REQUIRE(result);
     }
+    
+    SECTION("Overflow mix run2")
+    {
+        char test[201];
+        for(int i = 0; i < 199; i++){
+            test[i] = 'a';
+        }
+        test[199] = 'b';
+        char expected[] = "\x7F" "a" "\x48" "a" "\x01" "b" ; //127 a 72 a 1 b
+        
+        bool result = RunCompressionTest(test, sizeof(test) - 1,
+                                         expected, sizeof(expected) - 1);
+        REQUIRE(result);
+    }
+
+
 	// TODO: Add more test case sections!!
 }
 
