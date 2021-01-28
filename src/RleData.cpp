@@ -21,9 +21,9 @@ void RleData::Compress(const char* input, size_t inSize)
     int tempSize = 0;
     
     // First pass -- fill vector
-    char prevChar = NULL;
-    int counter = 0;
-    for(int i = 0; i < inSize; i++){
+    char prevChar = input[0];
+    int counter = 1;
+    for(int i = 1; i < inSize; i++){
         char currChar = input[i];
         if(currChar == prevChar){
             counter++;
@@ -35,7 +35,7 @@ void RleData::Compress(const char* input, size_t inSize)
                 counter = 0;
             }
         }
-        else if(prevChar){
+        else{
             temp.push_back(counter);
             tempSize++;
             temp.push_back(prevChar);
@@ -47,16 +47,11 @@ void RleData::Compress(const char* input, size_t inSize)
                 temp.push_back(currChar);
             }
         }
-        else{ // first iteration
-            prevChar = currChar;
-            counter++;
-        }
     }
     
     int negStart = -1;
     int negEnd = 0;
     for(int i = 0; i < temp.size(); i+=2){
-        
         if((temp[i] != 1) && (negStart == -1)){ // no neg run IP & positive run
             mData[mSize++] = temp[i];
             mData[mSize++] = temp[i+1];

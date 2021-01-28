@@ -18,39 +18,34 @@ void RleFile::CreateArchive(const std::string& source)
         memblock = new char[static_cast<unsigned int>(size)];
         file.seekg(0, std::ios::beg); // Seek back to start of file
         file.read(memblock, size);
-        file.close();
         // File data is now in memblock array
         // (Do something with it here...)
         mRleData.Compress(memblock, size);
-            
+        delete[] memblock;
+        file.close();
+        
         // Write to file
         std::string outFile = source + ".rl1";
-        mHeader.mFileNameLength = outFile.size();
-        mHeader.mFileName = outFile;
+        std::cout << "Source: " << source << std::endl;
+        mHeader.mFileNameLength = static_cast<unsigned char>(source.size());
+        mHeader.mFileName = source;
         mHeader.mFileSize = size;
-        
         std::ofstream arc(outFile, std::ios::out|std::ios::binary|std::ios::trunc);
         if (arc.is_open())
         {
             arc.write(mHeader.mSig, 4);
             arc.write(reinterpret_cast<char*>(&(mHeader.mFileSize)),4);
-            arc.write(reinterpret_cast<char*>(&(mHeader.mFileNameLength)),4);
-            arc.write(mHeader.mFileName.c_str(),outFile.size());
+            arc.write(reinterpret_cast<char*>(&(mHeader.mFileNameLength)),1);
+            arc.write(mHeader.mFileName.c_str(),mHeader.mFileNameLength);
             arc.write(mRleData.mData,mRleData.mSize);
-            
-            // Write to file
-            std::string outFile = source + ".rl1";
-            std::cout << "output name: " << outFile << std::endl;
-            mHeader.mFileNameLength = outFile.size();
-            mHeader.mFileName = outFile;
-            mHeader.mFileSize = size;
-            
+     
          // Use arc.write function to write data here
         }
         
 
         // Make sure to clean up!
-        delete[] memblock;
+        
+        
     }
 
 }
@@ -69,6 +64,35 @@ void RleFile::ExtractArchive(const std::string& source)
         file.seekg(0, std::ios::beg); // Seek back to start of file
         file.read(memblock, size);
         file.close();
+    
+        mRleData.Decompress(memblock, size, *(reinterpret_cast<int*>(&memblock[4])));
+        
+        //Write to file
+        
+        mHeader.mFileSize = *(reinterpret_cast<int*>(&memblock[4]));
+        mHeader.mFileNameLength = *(reinterpret_cast< unsigned char*>(&memblock[8]));
+        bool isZero = (mHeader.mFileNameLength == '0');
+        std::cout << "Length: " <<  mHeader.mFileNameLength << std::endl;
+        std::string outFile = "";
+        for(int i = 9; i < i+mHeader.mFileNameLength; i++){
+            outFile += *(reinterpret_cast<char*>(&memblock[i]));
+        }
+        std::cout << "Name: " <<  outFile << std::endl;
+        std::ofstream arc(outFile, std::ios::out|std::ios::binary|std::ios::trunc);
+        if (arc.is_open())
+        {
+            arc.write(mHeader.mSig, 4);
+            arc.write(reinterpret_cast<char*>(&(mHeader.mFileSize)),4);
+            arc.write(reinterpret_cast<char*>(&(mHeader.mFileNameLength)),4);
+            arc.write(mHeader.mFileName.c_str(),outFile.size());
+            arc.write(mRleData.mData,mRleData.mSize);
+            
+         // Use arc.write function to write data here
+        }
+        
+
+        // Make sure to clean up!
+        delete[] memblock;
         
     }
 }
