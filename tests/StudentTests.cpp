@@ -313,28 +313,28 @@ TEST_CASE("File compression", "[student]")
 	}
 }
 
-//TEST_CASE("File decompression", "[student]")
-//{
-//	RleFile r;
-//	SECTION("works.bmp.rl1")
-//	{
-//		r.ExtractArchive("data/works.bmp.rl1");
-//		bool result = CheckFileMD5("data/works.bmp", "8baad647acefae2f8c36ee111582a875");
-//		REQUIRE(result);
-//	}
-//	SECTION("xkcd.bmp.rl1")
-//	{
-//		r.ExtractArchive("data/xkcd.bmp.rl1");
-//		bool result = CheckFileMD5("data/xkcd.bmp", "a4d7efa89d47a94a76f8050dd8d60cd0");
-//		REQUIRE(result);
-//	}
-//	SECTION("logo.png.rl1")
-//	{
-//		r.ExtractArchive("data/logo.png.rl1");
-//		bool result = CheckFileMD5("data/logo.png", "95403309460632f60efa647ef59b78fc");
-//		REQUIRE(result);
-//	}
-//}
+TEST_CASE("File decompression", "[student]")
+{
+	RleFile r;
+	SECTION("works.bmp.rl1")
+	{
+		r.ExtractArchive("data/works.bmp.rl1");
+		bool result = CheckFileMD5("data/works.bmp", "8baad647acefae2f8c36ee111582a875");
+		REQUIRE(result);
+	}
+	SECTION("xkcd.bmp.rl1")
+	{
+		r.ExtractArchive("data/xkcd.bmp.rl1");
+		bool result = CheckFileMD5("data/xkcd.bmp", "a4d7efa89d47a94a76f8050dd8d60cd0");
+		REQUIRE(result);
+	}
+	SECTION("logo.png.rl1")
+	{
+		r.ExtractArchive("data/logo.png.rl1");
+		bool result = CheckFileMD5("data/logo.png", "95403309460632f60efa647ef59b78fc");
+		REQUIRE(result);
+	}
+}
 
 TEST_CASE("RLE Compression TA", "[student]")
 {
