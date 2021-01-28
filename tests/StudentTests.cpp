@@ -276,19 +276,19 @@ SECTION("Overflow mix run")
 	// TODO: Add more test case sections!!
 }
 
-//TEST_CASE("Command line arguments", "[student]")
-//{
-//	SECTION("instructions.txt.rl1")
-//	{
-//		const char* argv[] = {
-//			"tests/tests",
-//			"data/instructions.txt.rl1"
-//		};
-//		ProcessCommandArgs(2, argv);
-//		bool result = CheckFileMD5("data/instructions.txt", "5e042d2e4bf014e714dd7cfc4dc25aab");
-//		REQUIRE(result);
-//	}
-//}
+TEST_CASE("Command line arguments", "[student]")
+{
+	SECTION("instructions.txt.rl1")
+	{
+		const char* argv[] = {
+			"tests/tests",
+			"data/instructions.txt.rl1"
+		};
+		ProcessCommandArgs(2, argv);
+		bool result = CheckFileMD5("data/instructions.txt", "5e042d2e4bf014e714dd7cfc4dc25aab");
+		REQUIRE(result);
+	}
+}
 
 TEST_CASE("File compression", "[student]")
 {
