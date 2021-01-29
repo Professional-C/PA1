@@ -56,11 +56,9 @@ void RleFile::ExtractArchive(const std::string& source)
         
         
         //Write to file
-        std::cout << "Source: " << source << std::endl;
         mHeader.mFileSize = *(reinterpret_cast<int*>(&memblock[4]));
         mHeader.mFileNameLength = *(reinterpret_cast<int*>(&memblock[8]));
-        unsigned char length = mHeader.mFileNameLength;
-        std::string outFile = "";
+        std::string outFile;
         for(int i = 9; i < 9+mHeader.mFileNameLength; i++){
             outFile += memblock[i];
         }

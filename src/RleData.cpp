@@ -106,7 +106,7 @@ void RleData::Decompress(const char* input, size_t inSize, size_t outSize)
                 mData[mSize++] = input[i+1];
             }
         }
-       else if(input[i] < 0){ //negative run
+        else if(input[i] < 0){ //negative run
             for(int j = i+1; j <= i+input[i]*-1; j++){
                 mData[mSize++] = input[j];
             }
